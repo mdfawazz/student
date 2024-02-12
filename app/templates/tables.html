@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <title>Employee Information Form</title>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.6/css/jquery.dataTables.css">
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.6/js/jquery.dataTables.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+<!-- Include Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+
+<!-- Include Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- Include DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.6/css/jquery.dataTables.css">
+
+<!-- Include DataTables JS -->
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.6/js/jquery.dataTables.js"></script>
+
+  
+  <style> body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+  }
+  form {
+    max-width: 200px;
+    margin: auto;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    margin-bottom: 20px;
+  }  label {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 12px;
+  }
+  input {
+    padding: 4px;
+    font-size: 12px;
+  }
+  button {
+    width: 100%;
+    padding: 6px;
+    font-size: 14px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  table, th, td {
+    border: 1px solid #ddd;
+  }
+  th, td {
+    padding: 8px;
+    text-align: center;
+  }
+  .form-group{
+    width: 371px;
+  }
+  .delete-form, .update-form,.ints {
+    display: inline-block;
+    vertical-align: top;
+    max-width: 400px;
+    margin: 6px;
+    padding: 6px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+  </style>
+</head>
+<body>
+<div class="modal" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Your update form content goes here -->
+          <!-- ... -->
+          <div class="col-md-4">
+            <form id="loginContent" method='post' class="update-form" action='/update'>
+              {% csrf_token %}
+              <h2>Update Student</h2>
+              <div class='form-group'>
+              <label for="updateId">Enter ID to Update:</label>
+              <input type="text" id="updateId" class="form-control" name="id1" >
+              </div>
+              <div class='form-group'>
+              <label for="updateField">Select Field to Edit:</label>
+              <select id="updateField" class="form-control" name="field">
+                <option value="name">Name</option>
+                <option value="department">Department</option>
+                <option value="dob">Date of Birth</option>
+                <option value="address">Address</option>
+                <option value="gender">Gender</option>
+                <option value="others">CGPA</option>
+              </select>
+            </div>
+          
+            <div class='form-group'> 
+              <label for="updateValue">New Value:</label>
+              <input type="text" id="updateValue" class="form-control" name="value" required>
+            </div>
+              <button  class="btn btn-primary">Update</button>
+            </form>
+          </div>
+        </div>
+    </div>
+</div>
+</div>
+
+  <!-- Update your "Update" button to trigger the modal -->
+  <h2>Student Information Table</h2>
+  <div class="table-container" style="align-items:center;justify-content:center">
+    <table id='employeeTable' class="table table-sm">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Department</th>
+        <th>Date of Birth</th>
+        <th>gender</th>
+        <th>Address</th>
+        <th>CGPA</th>
+        <th>Update</th>
+        <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody id="tableBody">
+        {% for i in data %}
+        <tr>
+            <th>{{i.id}}</th>
+            <th>{{i.name}}</th>
+            <th>{{i.department}}</th>
+            <th>{{i.dob}}</th>
+            <th>{{i.gender}}</th>
+            <th>{{i.address}}</th>
+            <th>{{i.others}}</th>
+            <th>
+
+                <button class="btn btn-primary" id="updateButton" style="height:40px;width:100px;padding:0px" data-toggle="modal" data-target="#updateModal" data="{{i.id}}">Update</button>
+            </th>
+            <th>
+            <form action="delete2" method="post" style="border:none;background-color:none;height:25px;width:100px;margin-top:0px;padding:0px;margin-bottom:0px">
+                {% csrf_token %}
+                <input name="id1" value={{i.id}} hidden>
+                <button class="btn btn-danger"> delete</button>
+            </form>
+        </th>
+    </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a style="text-decoration:none"href="/add"><button style="border-radius:6px;border:none;height:30px;width:150px;margin-left:550px"class="bnt btn-primary"> add details</button></a>
+  
+</div>
+
+
+<script>
+    function setUpdateId() {
+        var rowId = $('#updateButton').data('id');
+        $('#updateId').val(rowId);
+      }
+
+      // Run the function when the modal is shown
+      $('#updateModal').on('shown.bs.modal', setUpdateId);
+  document.getElementById("updateButton").addEventListener("click", function() {
+    // Show the modal when the button is clicked
+    var rowId = $(this).data('id');
+    $('#id1').val(rowId);
+    $('#updateModal').modal('show');
+  });
+<script>
+  $('.updateButton').on('click', function() {
+    // Retrieve the ID from the data-id attribute
+    var rowId = $(this).data('id');
+
+    // Set the retrieved ID as the value of the 'updateId' input field in the modal form
+    $('#updateId').val(rowId);
+
+    // Show the modal when the button is clicked
+    $('#updateModal').modal('show');
+  });
+</script>
+
+<script>
+  // Run the function when the modal is fully shown
+  $('#updateModal').on('shown.bs.modal', function () {
+    // Retrieve the ID from the 'updateId' input field
+    var rowId = $('#updateId').val();
+    
+    // Optionally, you can do something with the retrieved ID here
+  });
+</script>
+<script>
+    document.getElementById("openLogin").addEventListener("click", function() {
+    document.getElementById("loginContent").style.display = "flex";
+  });
+  
+  document.getElementById("loginContent").addEventListener("click", function(event) {
+    if (event.target === this) {
+      this.style.display = "none";
+    }
+  });
+
+  <script>
+    $(document).ready(function() {
+      // Sample data for demonstration purposes
+      var employeeData = /* Replace this with your actual data */ [];
+  
+      // Set the desired number of items per page
+      const itemsPerPage = 10;
+  
+      // Initialize DataTable with the pageLength option
+      var table = $('#employeeTable').DataTable({
+        pageLength: itemsPerPage
+      });
+  
+      // Populate the DataTable with data
+      employeeData.forEach(function(employee) {
+        // Add each row to the DataTable
+        table.row.add([
+          employee.id,
+          employee.name,
+          employee.department,
+          employee.designation,
+          employee.dob,
+          employee.salary,
+          employee.address,
+          employee.others
+        ]).draw(false); // Draw the table without redrawing the pagination
+      });
+    });
+    console.log(itemsPerPage)
+    console.log(employeeData)
+  </script>
+  
